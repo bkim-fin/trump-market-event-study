@@ -439,7 +439,6 @@ td {
 
 td {
   color: #e8e8e8;
-  overflow-wrap: anywhere;
 }
 
 tbody tr {
@@ -503,7 +502,6 @@ tbody tr:hover {
   color: var(--muted);
   font-size: 13px;
   line-height: 1.48;
-  overflow-wrap: anywhere;
 }
 
 .event-detail h3 {
@@ -528,12 +526,6 @@ tbody tr:hover {
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-}
-
-.detail-row span,
-.reference-item p {
-  min-width: 0;
-  overflow-wrap: anywhere;
 }
 
 .returns-grid {
