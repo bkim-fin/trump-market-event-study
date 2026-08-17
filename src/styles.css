@@ -138,6 +138,7 @@ main {
 .method-box {
   max-width: 1680px;
   margin: 0 auto 12px;
+  min-width: 0;
 }
 
 .control-band {
@@ -273,10 +274,12 @@ input[type="search"]:focus {
 .reference-grid article,
 .method-box {
   padding: 13px;
+  min-width: 0;
 }
 
 .detail-panel {
   padding: 13px;
+  min-width: 0;
 }
 
 .detail-sticky {
@@ -337,6 +340,7 @@ input[type="search"]:focus {
 
 .chart-wrap {
   width: 100%;
+  min-width: 0;
   height: 390px;
   border: 1px solid var(--line);
   background:
@@ -379,6 +383,7 @@ input[type="search"]:focus {
 
 .table-wrap {
   width: 100%;
+  max-width: 100%;
   overflow: auto;
   border: 1px solid var(--line);
   background: #ffffff;
@@ -617,10 +622,12 @@ tbody tr:hover {
 @media (max-width: 620px) {
   main {
     padding: 12px;
+    overflow-x: hidden;
   }
 
   .topbar {
     padding: 18px 14px;
+    overflow-wrap: anywhere;
   }
 
   h1 {
@@ -637,5 +644,13 @@ tbody tr:hover {
 
   .returns-grid {
     grid-template-columns: 1fr;
+  }
+
+  .visual-panel,
+  .detail-panel,
+  .event-section,
+  .reference-grid article,
+  .method-box {
+    padding: 11px;
   }
 }
