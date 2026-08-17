@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Trump Communication x Market Event Study</title>
+    <meta
+      name="description"
+      content="Interactive event-study dashboard for Trump public communications and U.S. market reactions."
+    />
+    <link rel="stylesheet" href="src/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Interactive Event Study</p>
+        <h1>Trump Communication x Market Reactions</h1>
+      </div>
+      <div class="run-meta">
+        <span id="generatedAt">Loading data...</span>
+        <span id="coverageLabel"></span>
+      </div>
+    </header>
+
+    <main>
+      <section class="control-band" aria-label="Research filters">
+        <label>
+          Term
+          <select id="termFilter"></select>
+        </label>
+        <label>
+          Platform
+          <select id="platformFilter"></select>
+        </label>
+        <label>
+          Theme
+          <select id="themeFilter"></select>
+        </label>
+        <label>
+          Market
+          <select id="assetFilter">
+            <option value="QQQ">QQQ</option>
+            <option value="SPY">SPY</option>
+            <option value="RTX">RTX</option>
+            <option value="NASDAQ">NASDAQ Composite</option>
+            <option value="SPX">S&P 500</option>
+          </select>
+        </label>
+        <label>
+          Return Window
+          <select id="windowFilter">
+            <option value="1D">1D</option>
+            <option value="0D">0D</option>
+            <option value="3D">3D</option>
+            <option value="5D">5D</option>
+            <option value="-1/+1D">-1/+1D</option>
+          </select>
+        </label>
+        <label class="checkline">
+          <input id="hideConfounded" type="checkbox" />
+          Exclude flagged confounders
+        </label>
+      </section>
+
+      <section class="metrics-grid" aria-label="Summary metrics">
+        <article>
+          <span>Filtered Events</span>
+          <strong id="metricEvents">-</strong>
+        </article>
+        <article>
+          <span>Mean Abnormal</span>
+          <strong id="metricMean">-</strong>
+        </article>
+        <article>
+          <span>Positive Hit Rate</span>
+          <strong id="metricHit">-</strong>
+        </article>
+        <article>
+          <span>Confounder Flags</span>
+          <strong id="metricConf">-</strong>
+        </article>
+      </section>
+
+      <section class="workspace">
+        <section class="visual-panel" aria-label="Timeline and evidence chart">
+          <div class="panel-head">
+            <div>
+              <h2>Evidence Timeline</h2>
+              <p id="chartSubhead"></p>
+            </div>
+            <div class="legend">
+              <span><i class="dot pos"></i>Positive abnormal</span>
+              <span><i class="dot neg"></i>Negative abnormal</span>
+              <span><i class="dot conf"></i>Confounded</span>
+            </div>
+          </div>
+          <div class="chart-wrap">
+            <svg id="timeline" role="img" aria-label="Event abnormal returns timeline"></svg>
+          </div>
+          <div class="panel-head">
+            <div>
+              <h2>Theme-Only Baseline</h2>
+              <p>Mean 1D abnormal return by broad theme before tone, lag, and volatility-regime controls. Use this as a baseline, not a final signal.</p>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table id="themeTable">
+              <thead>
+                <tr>
+                  <th>Term</th>
+                  <th>Theme</th>
+                  <th>N</th>
+                  <th>QQQ mean</th>
+                  <th>RTX mean</th>
+                  <th>QQQ t</th>
+                  <th>RTX t</th>
+                  <th>Flagged</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+        <aside class="detail-panel" aria-label="Event details">
+          <div class="detail-sticky">
+            <h2>Event Detail</h2>
+            <div id="eventDetail" class="event-detail">
+              Select a marker or event row to inspect the original text, source URL, timestamp, session bucket, themes, and return windows.
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <section class="event-section">
+        <div class="panel-head">
+          <div>
+            <h2>Topic x Tone x Lag Influence</h2>
+            <p>Same-session duplicate posts are bundled by topic, tone, and trading date. QQQ/RTX use abnormal returns; best window balances magnitude and sample count.</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table id="toneLagTable">
+            <thead>
+              <tr>
+                <th>Topic</th>
+                <th>Tone</th>
+                <th>Days</th>
+                <th>Influence</th>
+                <th>QQQ Best</th>
+                <th>QQQ Mean</th>
+                <th>QQQ t</th>
+                <th>RTX Best</th>
+                <th>RTX Mean</th>
+                <th>RTX t</th>
+                <th>Read</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="event-section">
+        <div class="panel-head">
+          <div>
+            <h2>Influence by Volatility Regime</h2>
+            <p>Compares the same topic-tone effect across VIX regimes. This helps separate communication sensitivity from market stress regimes.</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table id="volRegimeTable">
+            <thead>
+              <tr>
+                <th>Topic</th>
+                <th>Tone</th>
+                <th>Regime</th>
+                <th>Days</th>
+                <th>QQQ Mean</th>
+                <th>QQQ Hit</th>
+                <th>RTX Mean</th>
+                <th>RTX Hit</th>
+                <th>Pattern</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="event-section">
+        <div class="panel-head">
+          <div>
+            <h2>Reverse-Engineered Response Clusters</h2>
+            <p>Positive/negative response days are defined from market movement first, then Trump posts on those sessions are clustered by text.</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table id="reverseClusterTable">
+            <thead>
+              <tr>
+                <th>Asset</th>
+                <th>Response</th>
+                <th>Days</th>
+                <th>Posts</th>
+                <th>Avg Surprise</th>
+                <th>Avg Return</th>
+                <th>Lag Mix</th>
+                <th>Cluster Terms</th>
+                <th>Example</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="event-section">
+        <div class="panel-head">
+          <div>
+            <h2>Event Explorer</h2>
+            <p>Sorted by largest absolute selected-window abnormal return for the active market.</p>
+          </div>
+          <input id="textSearch" type="search" placeholder="Search original text, entity, theme..." />
+        </div>
+        <div class="table-wrap tall">
+          <table id="eventTable">
+            <thead>
+              <tr>
+                <th>ET Time</th>
+                <th>Term</th>
+                <th>Platform</th>
+                <th>Bucket</th>
+                <th>Themes</th>
+                <th>Raw</th>
+                <th>Abn.</th>
+                <th>Conf.</th>
+                <th>Text</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="reference-grid">
+        <article>
+          <h2>Source Registry</h2>
+          <div id="sourceRegistry" class="reference-list"></div>
+        </article>
+        <article>
+          <h2>Fact-Check Ledger</h2>
+          <div id="factLedger" class="reference-list"></div>
+        </article>
+        <article>
+          <h2>Limitations</h2>
+          <ul id="limitations"></ul>
+        </article>
+        <article>
+          <h2>QA Checks</h2>
+          <div id="qaChecks" class="reference-list"></div>
+        </article>
+      </section>
+
+      <section class="method-box">
+        <h2>Method</h2>
+        <div id="methodText"></div>
+      </section>
+    </main>
+
+    <script src="src/app.js"></script>
+  </body>
+</html>
