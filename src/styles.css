@@ -269,6 +269,11 @@ input[type="search"]:focus {
   gap: 12px;
 }
 
+.workspace > *,
+.panel-head > * {
+  min-width: 0;
+}
+
 .visual-panel,
 .event-section,
 .reference-grid article,
@@ -640,6 +645,10 @@ tbody tr:hover {
 
   .chart-wrap {
     height: 320px;
+  }
+
+  #timeline {
+    display: block;
   }
 
   .returns-grid {
