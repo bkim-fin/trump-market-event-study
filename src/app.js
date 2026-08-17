@@ -135,7 +135,7 @@ function renderTimeline(events) {
   const w = width - margin.left - margin.right;
   const h = height - margin.top - margin.bottom;
   if (!events.length) {
-    svg.innerHTML = `<text x="24" y="48" fill="#687277">No events match the active filters.</text>`;
+    svg.innerHTML = `<text x="24" y="48" fill="#b8b8b8">No events match the active filters.</text>`;
     return;
   }
   const dates = events.map((e) => new Date(`${e.trading_session}T16:00:00-05:00`).getTime());
@@ -151,10 +151,10 @@ function renderTimeline(events) {
   const grid = document.createElementNS("http://www.w3.org/2000/svg", "g");
   grid.setAttribute("class", "grid");
   [-yLimit, -yLimit / 2, 0, yLimit / 2, yLimit].forEach((tick) => {
-    const line = svgLine(margin.left, y(tick), margin.left + w, y(tick), tick === 0 ? "#929a96" : "#dce1de");
+    const line = svgLine(margin.left, y(tick), margin.left + w, y(tick), tick === 0 ? "#d8d8d8" : "rgba(255,255,255,0.14)");
     grid.appendChild(line);
     const label = svgText(10, y(tick) + 4, `${tick.toFixed(1)}%`);
-    label.setAttribute("fill", "#687277");
+    label.setAttribute("fill", "#b8b8b8");
     label.setAttribute("font-size", "11");
     grid.appendChild(label);
   });
@@ -167,12 +167,12 @@ function renderTimeline(events) {
   for (let yr = startYear; yr <= endYear; yr += 1) {
     const t = new Date(`${yr}-01-01T00:00:00Z`).getTime();
     if (t >= minDate && t <= maxDate) {
-      axis.appendChild(svgLine(x(t), margin.top, x(t), margin.top + h, "#ecefeb"));
+      axis.appendChild(svgLine(x(t), margin.top, x(t), margin.top + h, "rgba(255,255,255,0.11)"));
       axis.appendChild(svgText(x(t) - 12, margin.top + h + 24, String(yr)));
     }
   }
   svg.appendChild(axis);
-  svg.appendChild(svgLine(margin.left, zeroY, margin.left + w, zeroY, "#929a96"));
+  svg.appendChild(svgLine(margin.left, zeroY, margin.left + w, zeroY, "#d8d8d8"));
 
   const drawEvents = [...events]
     .sort((a, b) => Math.abs(selectedReturn(a) || 0) - Math.abs(selectedReturn(b) || 0))
@@ -188,7 +188,7 @@ function renderTimeline(events) {
     c.setAttribute("cx", cx);
     c.setAttribute("cy", cy);
     c.setAttribute("r", r);
-    c.setAttribute("fill", e.confounders.length ? "#8e6a34" : value >= 0 ? "#376f63" : "#9b514a");
+    c.setAttribute("fill", e.confounders.length ? "#d8d8d8" : value >= 0 ? "#00e676" : "#ff1d35");
     c.setAttribute("opacity", "0.78");
     c.addEventListener("click", () => {
       state.selectedId = e.post_id;
